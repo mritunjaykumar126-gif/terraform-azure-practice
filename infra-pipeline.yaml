@@ -1,0 +1,34 @@
+trigger:
+ - main
+
+pool:
+  name: devops-agent
+
+variables:
+  terraformversion: v1.14.6
+  workingDirectory:  $(System.DefaultworkingDirectory)/terraformversion
+
+stages:
+ - stage: Terraform_init_validate_plan
+   displayname: To check Terraform_init_validate_plan
+   jobs:
+    - job: TerraformPlan
+
+   steps:
+
+   - checkout: self
+
+
+
+   - task: TerraformInstaller@1
+     displayName: Terrafrom TerraformInstaller
+     inputs:
+       terraformVersion: $(terrafromVersion)
+
+    -task: TerraformINIT@2
+     displayName: terrafrom init
+
+     inputs:
+     command: init
+
+     workingDirectory: $(workingDirectory)
