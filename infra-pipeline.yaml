@@ -6,7 +6,7 @@ pool:
 
 variables:
   terraformVersion: '1.14.6'
-  workingDirectory: '$(System.DefaultWorkingDirectory)'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/environment'
 
 stages:
   - stage: Terraform_Init_Validate_Plan
