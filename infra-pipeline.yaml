@@ -1,34 +1,47 @@
 trigger:
- - main
+  - main
 
 pool:
   name: devops-agent
 
 variables:
-  terraformversion: v1.14.6
-  workingDirectory:  $(System.DefaultworkingDirectory)/terraformversion
+  terraformVersion: '1.14.6'
+  workingDirectory: '$(System.DefaultWorkingDirectory)'
 
 stages:
- - stage: Terraform_init_validate_plan
-   displayname: To check Terraform_init_validate_plan
-   jobs:
-    - job: TerraformPlan
+  - stage: Terraform_Init_Validate_Plan
+    displayName: 'Terraform Init Validate Plan'
 
-   steps:
+    jobs:
+      - job: TerraformPlan
+        displayName: 'Terraform Plan'
 
-   - checkout: self
+        steps:
+          - checkout: self
 
+          - task: TerraformInstaller@1
+            displayName: 'Terraform Installer'
+            inputs:
+              terraformVersion: '$(terraformVersion)'
 
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Init'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(workingDirectory)'
 
-   - task: TerraformInstaller@1
-     displayName: Terrafrom TerraformInstaller
-     inputs:
-       terraformVersion: $(terrafromVersion)
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Validate'
+            inputs:
+              provider: 'azurerm'
+              command: 'validate'
+              workingDirectory: '$(workingDirectory)'
 
-    -task: TerraformINIT@2
-     displayName: terrafrom init
-
-     inputs:
-     command: init
-
-     workingDirectory: $(workingDirectory)
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Plan'
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(workingDirectory)'
+              environmentServiceNameAzureRM: 'azure-terraform-connection'
